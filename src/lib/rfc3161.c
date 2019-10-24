@@ -13,6 +13,7 @@
 #include <openssl/rand.h>
 #include <openssl/ssl.h>
 #include <openssl/ts.h>
+#include <openssl/engine.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,6 +128,8 @@ TS_RESP_CTX *create_tsctx(rfc3161_context *ct, CONF *conf, const char *section,
     }
     // recover and set various parameters
     TS_RESP_CTX_set_serial_cb(resp_ctx, serial_cb, NULL);
+    ENGINE_load_builtin_engines();
+    ENGINE_register_all_complete();
     if (!TS_CONF_set_crypto_device(conf, section, NULL)) {
         uts_logger(ct, LOG_ERR, "failed to get or use '%s' in section [ %s ]",
                    "crypto_device", section);
